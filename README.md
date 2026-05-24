@@ -1,40 +1,48 @@
 # Auditoria ISO/IEC 25010
 
-Ferramenta de análise estática e dinâmica de projetos Java, gerando um parecer de conformidade baseado na norma **ISO/IEC 25010**.
+Ferramenta de analise estatica e dinamica de projetos Java, gerando um parecer de conformidade baseado na norma **ISO/IEC 25010**.
 
-## Módulos
+## Modulos
 
-| Módulo | Característica ISO 25010 | O que mede |
+| Modulo | Caracteristica ISO 25010 | O que mede |
 |--------|--------------------------|-----------|
-| I | Manutenibilidade | Complexidade Ciclomática (McCabe), Acoplamento (CBO), Duplicação de Código |
-| II | Eficiência de Desempenho | Benchmarking de rotas HTTP, Análise de Latência por carga |
+| I | Manutenibilidade | Complexidade Ciclomatica (McCabe), Acoplamento (CBO), Duplicacao de Codigo |
+| II | Eficiencia de Desempenho | Benchmarking de rotas HTTP, Analise de Latencia por carga |
 | III | Confiabilidade | Cobertura de testes (JaCoCo), por arquivo e total |
-| IV | Relatório | PDF + HTML com sumário executivo e parecer de conformidade |
+| IV | Relatorio | PDF + HTML com sumario executivo e parecer de conformidade |
 
-## Pontuação das Métricas
+## Pontuacao das Metricas
 
-**Complexidade Ciclomática (CC)**
-- 1–10 → BAIXO ✅
-- 11–20 → MÉDIO ⚠️
-- >20 → ALTO ❌
+**Complexidade Ciclomatica (CC)**
+- 1 a 10: BAIXO
+- 11 a 20: MEDIO
+- acima de 20: ALTO
 
 **Acoplamento (CBO)**
-- ≤5 → BAIXO ✅
-- 6–10 → MÉDIO ⚠️
-- >10 → ALTO ❌
+- ate 5: BAIXO
+- 6 a 10: MEDIO
+- acima de 10: ALTO
 
 **Cobertura de Testes**
-- ≥80% → ALTA ✅
-- 50–79% → MÉDIA ⚠️
-- <50% → BAIXA ❌
+- 80% ou mais: ALTA
+- 50% a 79%: MEDIA
+- abaixo de 50%: BAIXA
 
-## Requisitos
+## Pre-requisitos
 
-- Python 3.8+
-- Java 11+ e Maven 3.6+ (para Módulos II e III)
-- Git
+| Ferramenta | Versao minima | Para que serve |
+|------------|---------------|----------------|
+| Python | 3.8+ | Executar a ferramenta |
+| Git | qualquer | Clonar o repositorio alvo |
+| Java | 11+ | Modulos II e III (compilar e testar o projeto alvo) |
+| Maven | 3.6+ | Modulos II e III (rodar testes e benchmark) |
 
-## Instalação
+> **Observacao:** Java e Maven sao necessarios apenas para os Modulos II (benchmark) e III (cobertura de testes).
+> Se o repositorio analisado nao usar Maven (ex: so tem codigo sem build system), ou se Maven nao estiver instalado,
+> a ferramenta continua funcionando e entrega o Modulo I (analise estatica) e o relatorio normalmente.
+> Use a flag `--sem-dinamico` para pular os Modulos II e III intencionalmente.
+
+## Instalacao
 
 ```bash
 git clone https://github.com/sordi1/auditoria-iso25010.git
@@ -45,33 +53,33 @@ pip install -r requirements.txt
 ## Uso
 
 ```bash
-# Análise completa (inclui benchmark dinâmico)
+# Analise completa (inclui benchmark e cobertura de testes)
 python main.py https://github.com/usuario/projeto-java
 
-# Apenas análise estática + cobertura (sem subir a aplicação)
+# Apenas analise estatica (sem subir a aplicacao, sem Maven)
 python main.py https://github.com/usuario/projeto-java --sem-dinamico
 ```
 
-## Saída
+## Saida
 
-Ao final da execução são gerados:
-- `relatorio_iso25010.pdf` — relatório completo em PDF
-- `relatorio_iso25010.html` — versão HTML do relatório
+Ao final da execucao sao gerados:
+- `relatorio_iso25010.pdf` — relatorio completo em PDF
+- `relatorio_iso25010.html` — versao HTML do relatorio
 - Status no terminal com parecer de conformidade
 
-## Exemplo de saída no terminal
+## Exemplo de saida no terminal
 
 ```
-============================================================
-  RESULTADO FINAL – ISO/IEC 25010
-============================================================
+AUDITORIA DE QUALIDADE - ISO/IEC 25010
+Repositorio : https://github.com/usuario/projeto-java
+
+RESULTADO FINAL - ISO/IEC 25010
   Cobertura de testes  : 34.5%  [BAIXA]
-  Complexidade média   : 7.2    [BAIXO]
+  Complexidade media   : 7.2    [BAIXO]
   Acoplamento (CBO)    : 4.1    [BAIXO]
   Blocos duplicados    : 2
-------------------------------------------------------------
+
   STATUS: REPROVADO
 
-  ⚠  Este código falha na ISO 25010: cobertura insuficiente (34.5%).
-============================================================
+  Este codigo falha na ISO 25010: cobertura insuficiente (34.5%).
 ```
