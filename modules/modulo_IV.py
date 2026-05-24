@@ -10,6 +10,15 @@ from reportlab.platypus import (
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
 
 
+def classificar_duplicatas(n: int) -> str:
+    """Classifica duplicacao: 0-5 BAIXO | 6-20 MEDIO | >20 ALTO"""
+    if n <= 5:
+        return "BAIXO"
+    elif n <= 20:
+        return "MEDIO"
+    return "ALTO"
+
+
 class RelatorioAuditoria:
     """
     Modulo IV - Relatorio de qualidade ISO/IEC 25010.
@@ -129,7 +138,7 @@ class RelatorioAuditoria:
             ["Cobertura de testes",        f"{cobertura:.1f}%",                      cls_cobertura],
             ["Complexidade ciclomatica",   str(mod1.get("complexidade_media", "N/A")), cls_complexidade],
             ["Acoplamento (CBO)",          str(mod1.get("cbo_medio", "N/A")),          cls_cbo],
-            ["Blocos de codigo duplicados", str(blocos_dup),                           "-"],
+            ["Blocos de codigo duplicados", str(blocos_dup), classificar_duplicatas(blocos_dup)],
         ]
         story.append(self._tabela(
             ["Metrica", "Valor", "Classificacao"],
@@ -179,8 +188,11 @@ class RelatorioAuditoria:
             obs.append(f"Acoplamento dentro do aceitavel (CBO medio {cbo}).")
 
         dup = mod1.get("blocos_duplicados", 0)
-        if dup > 3:
-            obs.append(f"{dup} blocos de codigo duplicados encontrados. Recomenda-se extrair logica repetida para metodos reutilizaveis.")
+        cls_dup = classificar_duplicatas(dup)
+        if cls_dup == "ALTO":
+            obs.append(f"Duplicacao ALTA ({dup} blocos). Recomenda-se extrair logica repetida para metodos reutilizaveis.")
+        elif cls_dup == "MEDIO":
+            obs.append(f"Duplicacao MEDIA ({dup} blocos). Considere refatorar os trechos repetidos.")
         else:
             obs.append(f"Duplicacao de codigo baixa ({dup} blocos).")
 
@@ -260,7 +272,7 @@ class RelatorioAuditoria:
             linhas = []
             for carga, dados in latencia.items():
                 aumento = dados.get("aumento_pct")
-                aumento_str = f"+{aumento}%" if aumento is not None else "-"
+                aumento_str = f"{aumento:+.1f}%" if aumento is not None else "-"
                 linhas.append([str(carga), f"{dados.get('latencia_ms', 0)}ms", aumento_str])
             story.append(self._tabela(
                 ["Requisicoes", "Latencia media", "Aumento vs 100 req"],
@@ -379,7 +391,7 @@ class RelatorioAuditoria:
   <tr><td>Cobertura de testes</td><td>{cobertura:.1f}%</td><td>{cls_cob}</td></tr>
   <tr><td>Complexidade ciclomatica media</td><td>{mod1.get('complexidade_media','N/A')}</td><td>{cls_c}</td></tr>
   <tr><td>Acoplamento (CBO medio)</td><td>{mod1.get('cbo_medio','N/A')}</td><td>{cls_cbo}</td></tr>
-  <tr><td>Blocos de codigo duplicados</td><td>{blocos}</td><td>-</td></tr>
+  <tr><td>Blocos de codigo duplicados</td><td>{blocos}</td><td>{classificar_duplicatas(blocos)}</td></tr>
 </table>
 
 <p class="status">Status: {status}</p>
