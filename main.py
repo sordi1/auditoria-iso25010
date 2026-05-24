@@ -17,7 +17,7 @@ import sys
 import os
 
 from modules.cloner          import clonar_repositorio, listar_arquivos_java
-from modules.maintainability import rodar_analise as analise_modulo1
+from modules.modulo_I import rodar_analise as analise_modulo1
 from modules.modulo_II       import EficienciaDesempenho
 from modules.modulo_III      import Confiabilidade
 from modules.modulo_IV       import RelatorioAuditoria
