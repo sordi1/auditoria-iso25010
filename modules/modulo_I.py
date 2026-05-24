@@ -100,7 +100,7 @@ def rodar_analise(java_files: list) -> dict:
 
     for filepath in java_files:
         nome = os.path.basename(filepath)
-        print(f"  → {nome}")
+        print(f"  Analisando: {nome}")
 
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             source = f.read()
